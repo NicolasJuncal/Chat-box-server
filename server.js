@@ -1,8 +1,8 @@
-const Koa = require('koa') // middleware developed by express
+const express = require('express') // middleware developed by express
 const http = require('http')
 const socket = require('socket.io')
-const app = new Koa()
-const httpServer = http.createServer(app.callback())
+const app = new express()
+const httpServer = http.createServer(app)
 const io = require("socket.io")(httpServer, {
   cors: {
     origin: "*",
@@ -12,15 +12,19 @@ const io = require("socket.io")(httpServer, {
 });
 const SERVER_HOST = 'localhost'
 const SERVER_PORT = 8080
-
 io.on('connection', socket => {
- socket.on('chat.message', data =>{
-   console.log("Message", data)
-   io.emit('chat.message', data)
- })
- socket.on('disconnect', () => {
-  console.log("disconect")
-})
+  socket.on('chat.message', data => {
+    console.log("Message", data)
+    io.emit('chat.message', data)
+  })
+  socket.on('online.user', userName => {
+    io.emit('online.user', userName)
+  })
+  
+
+  socket.on('disconnect', () => {
+    
+  })
 })
 
 
