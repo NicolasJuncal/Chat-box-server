@@ -11,7 +11,7 @@ const io = require("socket.io")(httpServer, {
   }
 });
 const SERVER_HOST = 'localhost'
-const SERVER_PORT = 8080
+const SERVER_PORT = process.env.PORT || 8080
 io.on('connection', socket => {
   socket.on('chat.message', data => {
     console.log("Message", data)
@@ -31,3 +31,12 @@ io.on('connection', socket => {
 httpServer.listen(SERVER_PORT, SERVER_HOST, () => {
   console.log(`listening to http://${SERVER_HOST}:${SERVER_PORT}`)
 })
+
+if (process.env.NODE_ENV === 'production') {
+  const path = require('path')
+  app.use(express.static(path.join(__dirname, 'build')));
+
+  app.get('/*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+  });
+}
